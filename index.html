@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AntiDoomscroll — Own your attention. Break the loop.</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- =========================================================
+       NATIVE MOBILE APPLICATION VIEWPORT
+       ========================================================= -->
+  <div class="app-viewport">
+
+    <!-- Dynamic Island -->
+    <div class="dynamic-island" onclick="showToast('Accessibility Daemon: 100% Offline & Active')">
+      <div class="island-camera"></div>
+      <div class="island-status-pill">
+        <div class="island-status-dot"></div>
+        <span>Shield ON</span>
+      </div>
+    </div>
+
+    <!-- Device Status Bar -->
+    <div class="device-status-bar">
+      <span id="device-clock">10:30</span>
+      <div style="display:flex; align-items:center; gap:6px; font-size:0.72rem;">
+        <span>5G</span>
+        <span>88%</span>
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+      </div>
+    </div>
+
+    <!-- In-App Notification Toast -->
+    <div class="app-toast-alert" id="app-toast-box">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      <span id="app-toast-text">Bedtime Shield: Active (10:30 PM)</span>
+    </div>
+
+    <!-- MAIN SCREENS CONTAINER -->
+    <div class="app-screens-container">
+
+      <!-- =========================================================
+           SCREEN 1: SHIELD (MAIN DASHBOARD)
+           ========================================================= -->
+      <section class="app-screen active-screen" id="screen-shield">
+        <div class="dash-topbar">
+          <div class="dash-user-info">
+            <h2>AntiDoomscroll</h2>
+            <p>Bedtime Shield scheduled for 10:30 PM</p>
+          </div>
+          <div class="shield-indicator-pill" onclick="showToast('Nighttime Shield: Locks feeds from 10:30 PM to 7:00 AM')">
+            <div class="island-status-dot"></div>
+            <span>Shield ON</span>
+          </div>
+        </div>
+
+        <!-- Focus Reclaimed Hero Card -->
+        <div class="focus-reclaimed-card">
+          <div class="focus-header-meta">
+            <span>Today's Focus Reclaimed</span>
+            <span style="color:var(--emerald); font-weight:700;">+38% vs Avg</span>
+          </div>
+          <div class="metric-big-row">
+            <div class="metric-big-number" id="reclaimed-big-number">2h 14m</div>
+            <small>Saved</small>
+          </div>
+          <p class="focus-card-caption">
+            You successfully diverted 18 compulsive micro-video flicking episodes and completed 4 physical challenges today.
+          </p>
+          <div class="focus-stat-counters">
+            <div class="stat-counter-col">
+              <div class="val" id="loops-stat-num">18</div>
+              <div class="lbl">Loops Intercepted</div>
+            </div>
+            <div class="stat-counter-col">
+              <div class="val" style="color:var(--cyan);">4 Done</div>
+              <div class="lbl">Physical Proofs</div>
+            </div>
+            <div class="stat-counter-col">
+              <div class="val" style="color:var(--emerald);">+42m</div>
+              <div class="lbl">Sleep Preserved</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Scroll Velocity Radar Widget -->
+        <div class="radar-widget-card">
+          <div class="radar-top-row">
+            <h4>
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Swipe Velocity Radar
+            </h4>
+            <span class="radar-state-pill">Mindful / Reading</span>
+          </div>
+          <div class="radar-track-bar">
+            <div class="radar-track-fill" style="width: 32%;"></div>
+          </div>
+          <div class="radar-info-strip">
+            <span>Live: 32 sw/min</span>
+            <span>Threshold: 85 sw/min</span>
+          </div>
+        </div>
+
+        <!-- Today's Interceptions & Physical Proofs Timeline -->
+        <div class="section-headline-strip">
+          <h4>Today's Behavioral & Physical Logs</h4>
+          <span style="font-size:0.68rem; color:var(--emerald); font-weight:700;">4 Verified</span>
+        </div>
+
+        <div class="session-log-list">
+          <div class="session-log-item">
+            <div class="session-left">
+              <div class="session-app-icon" style="background:#10B981;">🏋️</div>
+              <div class="session-details">
+                <h5>Physical Proof &bull; 5 Squats Verified</h5>
+                <p>Camera Verified &bull; Break Compulsive Loop</p>
+              </div>
+            </div>
+            <span class="session-reclaimed-badge">+20m Saved</span>
+          </div>
+
+          <div class="session-log-item">
+            <div class="session-left">
+              <div class="session-app-icon" style="background:#E1306C;">IG</div>
+              <div class="session-details">
+                <h5>Instagram Reels &bull; 10:30 PM</h5>
+                <p>Threshold hit &bull; Exited to Sleep</p>
+              </div>
+            </div>
+            <span class="session-reclaimed-badge">+35m Saved</span>
+          </div>
+
+          <div class="session-log-item">
+            <div class="session-left">
+              <div class="session-app-icon" style="background:#000; color:#00f2fe;">TT</div>
+              <div class="session-details">
+                <h5>TikTok For You &bull; 4:15 PM</h5>
+                <p>Rapid flicking &bull; Redirected to Notion</p>
+              </div>
+            </div>
+            <span class="session-reclaimed-badge">+25m Saved</span>
+          </div>
+        </div>
+
+        <!-- Protected Feeds List -->
+        <div class="section-headline-strip" style="margin-top:16px;">
+          <h4>Protected Algorithmic Feeds</h4>
+          <span style="font-size:0.68rem; color:var(--text-tertiary);">4 Active</span>
+        </div>
+
+        <div class="session-log-list">
+          <div class="session-log-item">
+            <div class="session-left">
+              <div class="session-app-icon" style="background:#E1306C;">IG</div>
+              <div class="session-details">
+                <h5>Instagram Reels</h5>
+                <p>Limit: 10m continuous &bull; Physical proof on</p>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="session-log-item">
+            <div class="session-left">
+              <div class="session-app-icon" style="background:#000; color:#00f2fe;">TT</div>
+              <div class="session-details">
+                <h5>TikTok For You</h5>
+                <p>Limit: 10m continuous &bull; Physical proof on</p>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 2: FEED INTERCEPT (INTERACTIVE MULTI-VIDEO FEED)
+           ========================================================= -->
+      <section class="app-screen feed-screen-container" id="screen-feed">
+        <!-- Top Feed Overlay -->
+        <div class="feed-top-nav-overlay">
+          <span class="feed-channel-title">Instagram Reels</span>
+          <div class="feed-session-timer-pill">⏱ 10:02 continuous</div>
+        </div>
+
+        <!-- Floating Live Velocity HUD -->
+        <div class="feed-velocity-hud">
+          <div class="hud-stats-line">
+            <span>Swipe Velocity Sensor:</span>
+            <span id="hud-swipe-count" style="color:var(--rose); font-weight:700;">4 Swipes / 30s</span>
+          </div>
+          <div class="hud-velocity-bar-wrap">
+            <div class="hud-velocity-bar-fill" id="hud-velocity-fill" style="width: 32%;"></div>
+          </div>
+          <div class="hud-buttons-row">
+            <button class="btn-hud-action" id="btn-hud-flick">
+              👆 Quick Flick
+            </button>
+            <button class="btn-hud-action" id="btn-hud-trigger" style="background:#EF4444; border-color:#DC2626;">
+              🚨 Intervene
+            </button>
+          </div>
+        </div>
+
+        <!-- Draggable Multi-Video Carousel Stage -->
+        <div class="feed-video-carousel" id="feed-video-carousel" title="Swipe or drag vertically between videos">
+
+          <!-- Reel 1 -->
+          <div class="reel-card-item current" id="reel-1">
+            <div class="reel-ambient-backdrop" style="background: radial-gradient(circle at 70% 30%, #ec4899 0%, transparent 60%), radial-gradient(circle at 20% 70%, #8b5cf6 0%, transparent 50%);"></div>
+            <div class="reel-meta-column">
+              <div class="reel-author-row">
+                <div class="reel-avatar" style="background:linear-gradient(135deg, #a855f7, #ec4899);">V</div>
+                <span>@viral.algorithms</span>
+                <span style="font-size:0.65rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px;">Follow</span>
+              </div>
+              <p class="reel-caption-body">
+                "Infinite scrolling video feeds are engineered with variable reward schedules that actively override natural self-regulation... 🌀 #algorithm"
+              </p>
+              <div class="reel-audio-track">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                Original audio &bull; Dopamine Loop #42
+              </div>
+            </div>
+          </div>
+
+          <!-- Reel 2 -->
+          <div class="reel-card-item next" id="reel-2">
+            <div class="reel-ambient-backdrop" style="background: radial-gradient(circle at 30% 20%, #3b82f6 0%, transparent 60%), radial-gradient(circle at 80% 80%, #06b6d4 0%, transparent 50%);"></div>
+            <div class="reel-meta-column">
+              <div class="reel-author-row">
+                <div class="reel-avatar" style="background:linear-gradient(135deg, #3b82f6, #06b6d4);">N</div>
+                <span>@night.scroller</span>
+              </div>
+              <p class="reel-caption-body">
+                "Just checking one DM at 10:30 PM... and suddenly 45 minutes disappear into infinite flicking. Sound familiar? 😴"
+              </p>
+              <div class="reel-audio-track">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                Trending Late Night Sound &bull; 940k videos
+              </div>
+            </div>
+          </div>
+
+          <!-- Reel 3 -->
+          <div class="reel-card-item next" id="reel-3">
+            <div class="reel-ambient-backdrop" style="background: radial-gradient(circle at 60% 40%, #10b981 0%, transparent 60%), radial-gradient(circle at 20% 80%, #f59e0b 0%, transparent 50%);"></div>
+            <div class="reel-meta-column">
+              <div class="reel-author-row">
+                <div class="reel-avatar" style="background:linear-gradient(135deg, #10b981, #f59e0b);">S</div>
+                <span>@study.rabbit.hole</span>
+              </div>
+              <p class="reel-caption-body">
+                "Break time was supposed to be 5 minutes. Why am I watching 30 micro-videos about random trivia right before my project deadline? 📚"
+              </p>
+              <div class="reel-audio-track">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                Procrastination Beats &bull; Loop #12
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Side Floating Actions -->
+        <div class="feed-social-bar">
+          <div class="social-button-item">
+            <div class="social-icon-bubble">❤️</div>
+            <span>184K</span>
+          </div>
+          <div class="social-button-item">
+            <div class="social-icon-bubble">💬</div>
+            <span>1.2K</span>
+          </div>
+          <div class="social-button-item">
+            <div class="social-icon-bubble">↗️</div>
+            <span>Share</span>
+          </div>
+        </div>
+
+        <!-- FULL-SCREEN COGNITIVE & PHYSICAL FRICTION MODAL (3 MODES) -->
+        <div class="cognitive-friction-modal" id="cognitive-pause-overlay">
+          <div class="checkpoint-header">
+            <span class="checkpoint-badge">Cognitive Friction Checkpoint</span>
+            <h2>Conscious Pause</h2>
+            <p>10 minutes of continuous scrolling detected at 10:30 PM. Complete a challenge to ground your focus.</p>
+          </div>
+
+          <!-- 3 Mode Selector Tabs -->
+          <div class="pause-mode-tabs">
+            <button class="pause-tab-btn active" id="pause-tab-breath">🌬️ Breath</button>
+            <button class="pause-tab-btn" id="pause-tab-typed">✍️ Reflection</button>
+            <button class="pause-tab-btn" id="pause-tab-physical">🏃 Physical Proof</button>
+          </div>
+
+          <!-- Challenge 1: Guided Breathing Circle -->
+          <div class="breath-challenge-panel" id="panel-breath">
+            <div class="breath-ring-chassis" id="breath-ring-element">
+              <div class="breath-ring-core">
+                <span class="breath-text-phase" id="breath-phase-text">Inhale deeply...</span>
+                <span class="breath-text-number" id="breath-timer-val">5s</span>
+              </div>
+            </div>
+            <span style="font-size:0.68rem; color:var(--text-secondary); margin-top:6px;">Mandatory pause to break involuntary dopamine loop</span>
+          </div>
+
+          <!-- Challenge 2: Mindful Typed Reflection -->
+          <div class="typed-challenge-panel" id="panel-typed">
+            <p style="font-size:0.75rem; color:var(--text-secondary); text-align:left;">
+              Type a conscious reflection or tap a suggestion to unlock choices:
+            </p>
+            <textarea class="typed-challenge-input" id="typed-intent-input" placeholder="e.g. I only opened my phone to reply to Alex's message..."></textarea>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="intent-pill-btn" data-text="I only came to reply to a message" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-glass); color:#fff; font-size:0.66rem; padding:4px 8px; border-radius:10px; cursor:pointer;">
+                Reply to message
+              </button>
+              <button class="intent-pill-btn" data-text="I fell into a mindless scrolling loop" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-glass); color:#fff; font-size:0.66rem; padding:4px 8px; border-radius:10px; cursor:pointer;">
+                Mindless scrolling
+              </button>
+              <button class="intent-pill-btn" data-text="I need to go to sleep now" style="background:rgba(255,255,255,0.08); border:1px solid var(--border-glass); color:#fff; font-size:0.66rem; padding:4px 8px; border-radius:10px; cursor:pointer;">
+                Ready for bed
+              </button>
+            </div>
+          </div>
+
+          <!-- Challenge 3: Live Camera / Physical Proof-of-Action Verification -->
+          <div class="physical-camera-panel" id="panel-physical">
+            <!-- Activity Selector Row -->
+            <div class="activity-choice-row">
+              <button class="activity-pill-btn active" data-activity="squats">🏋️ 5 Squats</button>
+              <button class="activity-pill-btn" data-activity="jacks">🤸 10 Jumping Jacks</button>
+              <button class="activity-pill-btn" data-activity="desk">🧹 Tidy Workspace</button>
+              <button class="activity-pill-btn" data-activity="water">💧 Drink Water</button>
+            </div>
+
+            <!-- Viewfinder with AI Tracking HUD -->
+            <div class="camera-viewfinder-box">
+              <video id="camera-feed-video" class="camera-video-element" autoplay playsinline muted></video>
+              
+              <!-- Fallback animated AI Vision background if no physical webcam -->
+              <div id="camera-simulated-bg" style="display:none; position:absolute; inset:0; background:radial-gradient(circle at 50% 50%, #0d1e2e 0%, #02060b 100%);">
+                <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(16,185,129,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.08) 1px, transparent 1px); background-size:20px 20px;"></div>
+              </div>
+
+              <!-- AI Scanning Overlay -->
+              <div class="camera-hud-overlay">
+                <div class="hud-scan-header">
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="island-status-dot"></span>
+                    <span>AI Vision: Pose Estimator Active</span>
+                  </div>
+                  <span style="color:#06B6D4;">ON-DEVICE</span>
+                </div>
+
+                <!-- Bounding Wireframe Skeleton -->
+                <div class="ai-pose-skeleton" id="ai-pose-box">
+                  <div class="skeleton-head"></div>
+                  <div class="skeleton-joint"></div>
+                  <div style="width:40px; height:2px; background:rgba(6,182,212,0.6); margin:6px 0;"></div>
+                  <div style="display:flex; justify-content:space-between; width:50px;">
+                    <div class="skeleton-joint"></div>
+                    <div class="skeleton-joint"></div>
+                  </div>
+                </div>
+
+                <!-- Live Reps / Task HUD -->
+                <div class="hud-rep-counter-pill">
+                  <span id="camera-task-name">AI Task: 5 Squats Verification</span>
+                  <span id="camera-rep-count" style="color:var(--emerald);">Reps: 0/5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Camera Controls & Snapshot Button -->
+            <div class="camera-controls-row">
+              <button class="btn-cam-trigger" id="btn-track-reps">
+                ⚡ Track Reps Live (+1 Rep)
+              </button>
+              <button class="btn-cam-snap" id="btn-snap-proof">
+                📸 Snap Proof
+              </button>
+            </div>
+
+            <!-- Success Verification Banner -->
+            <div class="proof-success-banner" id="proof-success-banner">
+              <span>✓</span>
+              <span><strong>Verified by AI Vision!</strong> Dopamine loop broken. Physical movement registered.</span>
+            </div>
+          </div>
+
+          <!-- Grounding Prompt Box -->
+          <div class="intent-dialog-card">
+            <p class="intent-dialog-prompt">
+              "Did you find what you originally came here for?"
+            </p>
+
+            <div class="intent-action-buttons" id="intent-action-buttons">
+              <button class="btn-action-primary" id="btn-pause-exit">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                Close App & Sleep
+              </button>
+              <button class="btn-action-secondary" id="btn-pause-redirect">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Redirect to Constructive Habit &rarr;
+              </button>
+              <button class="btn-action-snooze" id="btn-pause-snooze">
+                Emergency 5-Min Extension (Diminishing)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 3: HABIT REDIRECTION DECK
+           ========================================================= -->
+      <section class="app-screen" id="screen-habits">
+        <div class="screen-title-group">
+          <h3>Habit Redirection Deck</h3>
+          <p>1-Tap jump shortcuts to constructive intentional apps</p>
+        </div>
+
+        <div class="habit-kudos-box">
+          <span style="font-size:1.6rem;">🌱</span>
+          <div>
+            <h4 style="font-size:0.84rem; font-weight:700; color:#A7F3D0;">45 Minutes Reclaimed!</h4>
+            <p style="font-size:0.72rem; color:var(--text-secondary);">Bedtime routine protected from algorithmic loss.</p>
+          </div>
+        </div>
+
+        <!-- 4 In-App Interactive Launchers -->
+        <div class="habit-tiles-grid">
+          <div class="habit-app-tile kindle" data-modal="modal-sim-kindle">
+            <div class="habit-tile-icon-box">📖</div>
+            <div class="habit-tile-labels">
+              <h4>Kindle Reader</h4>
+              <p>Atomic Habits</p>
+            </div>
+            <span class="habit-tile-launch-tag">Open Book &rarr;</span>
+          </div>
+
+          <div class="habit-app-tile notion" data-modal="modal-sim-notion">
+            <div class="habit-tile-icon-box">📝</div>
+            <div class="habit-tile-labels">
+              <h4>Notion Notes</h4>
+              <p>SE Capstone Tasks</p>
+            </div>
+            <span class="habit-tile-launch-tag">Open Tasks &rarr;</span>
+          </div>
+
+          <div class="habit-app-tile meditate" data-modal="modal-sim-meditate">
+            <div class="habit-tile-icon-box">🧘</div>
+            <div class="habit-tile-labels">
+              <h4>Mindful Breath</h4>
+              <p>Sleep Wind-down</p>
+            </div>
+            <span class="habit-tile-launch-tag">Start Timer &rarr;</span>
+          </div>
+
+          <div class="habit-app-tile sleep" data-modal="modal-sim-sleep">
+            <div class="habit-tile-icon-box">🌙</div>
+            <div class="habit-tile-labels">
+              <h4>Sleep Shield</h4>
+              <p>Lock until 7:00 AM</p>
+            </div>
+            <span class="habit-tile-launch-tag">Enable Lockout &rarr;</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 4: STATS & SDG 3
+           ========================================================= -->
+      <section class="app-screen" id="screen-stats">
+        <div class="screen-title-group">
+          <h3>Focus & Health Impact</h3>
+          <p>Longitudinal behavioral telemetry</p>
+        </div>
+
+        <!-- SDG 3 Banner -->
+        <div class="sdg-banner-strip">
+          <div class="sdg-box-logo">SDG<br>3</div>
+          <div>
+            <h4 style="font-size:0.84rem; font-weight:800; color:#86EFAC;">SDG 3: Good Health & Well-Being</h4>
+            <p style="font-size:0.7rem; color:var(--text-secondary);">Reducing algorithmic sleep fragmentation and anxiety spirals.</p>
+          </div>
+        </div>
+
+        <!-- Weekly Reclaimed Hours Bar Chart -->
+        <div class="stats-chart-card">
+          <div class="chart-header-row">
+            <h4>Weekly Hours Reclaimed</h4>
+            <div style="display:flex; gap:4px;">
+              <button class="filter-tab-btn" data-filter="day" style="background:none; border:none; color:var(--text-tertiary); font-size:0.7rem; font-weight:700; cursor:pointer; padding:2px 6px;">Day</button>
+              <button class="filter-tab-btn active" data-filter="week" style="background:rgba(255,255,255,0.1); border-radius:6px; border:none; color:#fff; font-size:0.7rem; font-weight:700; cursor:pointer; padding:2px 6px;">Week</button>
+              <button class="filter-tab-btn" data-filter="month" style="background:none; border:none; color:var(--text-tertiary); font-size:0.7rem; font-weight:700; cursor:pointer; padding:2px 6px;">Month</button>
+            </div>
+          </div>
+
+          <div class="chart-bars-stage">
+            <div class="chart-bar-pillar">
+              <div class="bar-fill-rectangle" style="height: 48px;"></div>
+              <span>Mon</span>
+            </div>
+            <div class="chart-bar-pillar">
+              <div class="bar-fill-rectangle" style="height: 62px;"></div>
+              <span>Tue</span>
+            </div>
+            <div class="chart-bar-pillar">
+              <div class="bar-fill-rectangle" style="height: 38px;"></div>
+              <span>Wed</span>
+            </div>
+            <div class="chart-bar-pillar">
+              <div class="bar-fill-rectangle" style="height: 76px;"></div>
+              <span>Thu</span>
+            </div>
+            <div class="chart-bar-pillar">
+              <div class="bar-fill-rectangle" style="height: 52px;"></div>
+              <span>Fri</span>
+            </div>
+            <div class="chart-bar-pillar">
+              <div class="bar-fill-rectangle" style="height: 82px;"></div>
+              <span>Sat</span>
+            </div>
+            <div class="chart-bar-pillar active">
+              <div class="bar-fill-rectangle" style="height: 92px;"></div>
+              <span style="color:var(--emerald); font-weight:700;">Sun</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- App Consumption Breakdown -->
+        <div class="consumption-breakdown-card">
+          <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; color:var(--text-tertiary);">Intercepted Platform Share</span>
+          <div class="multi-segment-bar">
+            <div class="segment-ig" title="Instagram Reels 45%"></div>
+            <div class="segment-tt" title="TikTok 35%"></div>
+            <div class="segment-yt" title="YouTube Shorts 20%"></div>
+          </div>
+          <div class="segment-legend">
+            <span>Instagram (45%)</span>
+            <span>TikTok (35%)</span>
+            <span>Shorts (20%)</span>
+          </div>
+        </div>
+
+        <!-- 2x2 Metric Grid -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+          <div style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:12px; padding:12px;">
+            <span style="font-size:0.66rem; color:var(--text-tertiary); text-transform:uppercase;">Pause Completion</span>
+            <div style="font-family:var(--font-heading); font-size:1.4rem; font-weight:800; color:var(--emerald); margin-top:2px;">88.4%</div>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:12px; padding:12px;">
+            <span style="font-size:0.66rem; color:var(--text-tertiary); text-transform:uppercase;">Circadian Gain</span>
+            <div style="font-family:var(--font-heading); font-size:1.4rem; font-weight:800; color:var(--cyan); margin-top:2px;">+42 min</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           SCREEN 5: SETTINGS & DAEMON CONTROLS
+           ========================================================= -->
+      <section class="app-screen" id="screen-settings">
+        <div class="screen-title-group">
+          <h3>Settings & Daemon</h3>
+          <p>Configure detection rules and pause challenges</p>
+        </div>
+
+        <!-- Continuous Limit Range Slider -->
+        <div class="slider-control-card">
+          <div class="slider-top-row">
+            <span>Continuous Scroll Limit</span>
+            <span id="setting-continuous-val" style="color:var(--emerald);">10 min</span>
+          </div>
+          <input type="range" class="range-input" id="setting-continuous-range" min="5" max="30" step="5" value="10">
+          <p style="font-size:0.68rem; color:var(--text-secondary);">Deploys cognitive pause when feed runs uninterrupted</p>
+        </div>
+
+        <div class="settings-list-card">
+          <div class="setting-row">
+            <div class="setting-labels">
+              <h4>Focus Shield Active</h4>
+              <p>Automatic 10:30 PM bedtime lockout</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-labels">
+              <h4>Camera AI Movement Verification</h4>
+              <p>Require squats/chores proof for snooze</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-labels">
+              <h4>Zen Audio Harmonic Chime</h4>
+              <p>Solfeggio sound feedback during pause</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="setting-audio-switch" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-labels">
+              <h4>Diminishing Extensions</h4>
+              <p>Exponential friction penalty on snooze</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Offline Daemon Verification -->
+        <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:12px; padding:12px; margin-top:14px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <h4 style="font-size:0.8rem; font-weight:700; color:var(--emerald);">Zero-Telemetry Local Daemon</h4>
+            <p style="font-size:0.68rem; color:var(--text-secondary);">Android Accessibility Service &bull; 0 Bytes transmitted</p>
+          </div>
+          <span style="font-size:0.7rem; font-weight:800; color:var(--emerald);">ACTIVE</span>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- =========================================================
+         IN-APP SIMULATED APPS (KINDLE, NOTION, MEDITATE, SLEEP)
+         ========================================================= -->
+
+    <!-- 1. Kindle e-Reader Modal View -->
+    <div class="simulated-app-modal" id="modal-sim-kindle">
+      <div class="sim-app-navbar">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>📖</span>
+          <h4>Kindle Reader</h4>
+        </div>
+        <button class="btn-close-sim-app">Close & Done</button>
+      </div>
+      <div class="sim-app-body kindle-viewport">
+        <div class="kindle-title">Atomic Habits</div>
+        <div class="kindle-chapter">Chapter 1: The Surprising Power of Atomic Habits</div>
+        <p style="margin-bottom:14px;">
+          "Changes that seem small and unimportant at first will compound into remarkable results if you are willing to stick with them for years."
+        </p>
+        <p style="margin-bottom:14px;">
+          "Too often, we convince ourselves that massive success requires massive action. Whether it is improving your health, breaking a digital habit, or achieving a goal, we put pressure on ourselves to make some earth-shattering improvement."
+        </p>
+        <p>
+          "Meanwhile, improving by 1 percent isn't particularly notable—sometimes it isn't even noticeable—but it can be far more meaningful, especially in the long run."
+        </p>
+        <div style="margin-top:24px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:0.75rem; color:var(--text-secondary); text-align:center;">
+          Progress: 4% &bull; Reading Streak: 12 Days 🔥
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Notion Workspace Modal View -->
+    <div class="simulated-app-modal" id="modal-sim-notion">
+      <div class="sim-app-navbar">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>📝</span>
+          <h4>Notion Workspace</h4>
+        </div>
+        <button class="btn-close-sim-app">Close & Done</button>
+      </div>
+      <div class="sim-app-body" style="font-family:var(--font-body);">
+        <h3 style="font-size:1.15rem; font-weight:800; margin-bottom:4px;">Software Engineering Capstone</h3>
+        <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:16px;">AntiDoomscroll Final Presentation Tasks</p>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <label style="display:flex; align-items:center; gap:10px; font-size:0.8rem; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid var(--border-glass);">
+            <input type="checkbox" checked style="accent-color:var(--emerald);">
+            <span style="text-decoration:line-through; color:var(--text-tertiary);">Review AntiDoomscroll Product Pitch PDF</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; font-size:0.8rem; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid var(--border-glass);">
+            <input type="checkbox" checked style="accent-color:var(--emerald);">
+            <span style="text-decoration:line-through; color:var(--text-tertiary);">Implement Swipe Velocity Heuristics Engine</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; font-size:0.8rem; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid var(--border-glass);">
+            <input type="checkbox" checked style="accent-color:var(--emerald);">
+            <span>Demonstrate Physical Proof Camera Verification</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; font-size:0.8rem; background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; border:1px solid var(--border-glass);">
+            <input type="checkbox" style="accent-color:var(--emerald);">
+            <span>Present to Faculty Evaluation Panel</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Mindful Meditation Modal View -->
+    <div class="simulated-app-modal" id="modal-sim-meditate">
+      <div class="sim-app-navbar">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>🧘</span>
+          <h4>Headspace Breathwork</h4>
+        </div>
+        <button class="btn-close-sim-app">Close & Done</button>
+      </div>
+      <div class="sim-app-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%;">
+        <div style="width:140px; height:140px; border-radius:50%; background:radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%); border:2px solid var(--violet); display:flex; align-items:center; justify-content:center; font-size:2.5rem; animation:dotGlow 4s infinite;">
+          🌊
+        </div>
+        <h3 style="font-size:1.2rem; font-weight:800; margin-top:16px;">Sleep Wind-Down</h3>
+        <p style="font-size:0.76rem; color:var(--text-secondary); max-width:260px; margin-top:6px;">
+          Slow your heart rate and release cognitive tension from screen flicking.
+        </p>
+        <button onclick="audio.playZenChime(); showToast('Session active: 10m timer started 🌙')" style="margin-top:20px; background:linear-gradient(135deg, var(--violet), #6D28D9); color:#fff; border:none; padding:10px 24px; border-radius:20px; font-weight:700; font-size:0.8rem; cursor:pointer;">
+          Begin 10-Minute Winddown
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Sleep Shield Modal View -->
+    <div class="simulated-app-modal" id="modal-sim-sleep">
+      <div class="sim-app-navbar">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>🌙</span>
+          <h4>Sleep Shield Lockout</h4>
+        </div>
+        <button class="btn-close-sim-app">Dismiss</button>
+      </div>
+      <div class="sim-app-body sleep-shield-viewport">
+        <div style="font-size:3rem;">🌕</div>
+        <div class="sleep-clock-digits" id="sleep-clock-display">10:30</div>
+        <div style="background:rgba(16,185,129,0.15); color:var(--emerald); border:1px solid rgba(16,185,129,0.3); padding:6px 16px; border-radius:20px; font-size:0.78rem; font-weight:700;">
+          All Algorithmic Feeds Locked
+        </div>
+        <p style="font-size:0.76rem; color:var(--text-secondary); max-width:260px;">
+          Sleep hygiene active until 7:00 AM. Sleep well and reclaim your tomorrow.
+        </p>
+      </div>
+    </div>
+
+    <!-- APP BOTTOM NAVIGATION BAR -->
+    <nav class="app-nav-bar">
+      <button class="nav-tab-btn active" data-tab="screen-shield">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Shield
+      </button>
+
+      <button class="nav-tab-btn" data-tab="screen-feed">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        Feed
+      </button>
+
+      <button class="nav-tab-btn" data-tab="screen-habits">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Habits
+      </button>
+
+      <button class="nav-tab-btn" data-tab="screen-stats">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Stats
+      </button>
+
+      <button class="nav-tab-btn" data-tab="screen-settings">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <!-- Native Hardware Home Indicator -->
+    <div class="device-home-indicator"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
