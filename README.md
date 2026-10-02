@@ -1,56 +1,46 @@
 # AntiDoomscroll
 
-> **Reclaiming Time and Focus from Algorithmic Feeds**  
-> *Primary Target: United Nations SDG 3 – Good Health and Well-Being*
+> A web prototype for a mobile app that helps users stop mindless short-form video scrolling.
 
-AntiDoomscroll is a real-time behavioral intervention application designed to interrupt compulsive short-form video feed consumption (TikTok, Instagram Reels, YouTube Shorts). Instead of passive timers that can be dismissed with a single tap, AntiDoomscroll deploys active cognitive pauses and physical proof-of-action checkpoints to restore conscious self-regulation.
-
----
-
-## 🌟 Key Features
-
-1. **Scroll Velocity Detector**: Differentiates between intentional reading and compulsive micro-video flicking via real-time touch speed and duration heuristics.
-2. **Cognitive Friction Checkpoints**:
-   - **Guided Box Breathing**: 5-second mandatory breathing circle (*Inhale... Hold... Exhale...*) with Solfeggio 528Hz audio cue.
-   - **Mindful Typed Reflection**: Prompts users to type why they opened their device or choose quick grounding reflections before unlocking choices.
-3. **Physical Proof-of-Action Camera Verification**:
-   - Users must complete real-world physical workouts (5 Squats, 10 Jumping Jacks) or offline chores (Tidying workspace, drinking water).
-   - Real-time camera viewfinder with AI Pose Estimation tracking skeleton and live rep counter.
-4. **Habit Redirection Deck**:
-   - 1-Tap jump shortcuts to constructive apps: Kindle Reader (*Atomic Habits*), Notion Study Workspace, Mindful Wind-down, and Night Sleep Shield.
-5. **Diminishing Extensions Policy**:
-   - Permits emergency time (+3m / +5m) but progressively increases friction duration to prevent bingeing relapse.
-6. **Focus Shield & Nighttime Lockout**:
-   - Hard lockouts during preset sleep (10:30 PM &ndash; 7:00 AM) and deep-work study hours.
-7. **Privacy-First Zero-Telemetry Guarantee**:
-   - Runs 100% locally on-device without tracking viewing history or sending telemetry to external cloud servers.
+AntiDoomscroll is an app designed to interrupt compulsive scrolling on platforms like TikTok, Instagram Reels, and YouTube Shorts. Unlike regular screen time limits that can be dismissed with a single tap, AntiDoomscroll introduces active friction — requiring a brief pause, a reflection, or a quick physical movement before you can keep scrolling.
 
 ---
 
-## 🚀 Getting Started
+## Key Features
 
-### Local Browser
-Simply clone or download this repository and open `index.html` in any modern web browser:
-```bash
-git clone https://github.com/ggaaiiaaaaaa/antidoomscroll.git
-cd antidoomscroll
-# Open index.html in your browser or serve via XAMPP Apache
-```
+1. **Scroll Speed & Time Detection**
+   - Monitors how fast and how long you scroll to distinguish intentional browsing from fast, mindless flicking.
 
-### XAMPP Apache
-Place the directory inside `c:\xampp\htdocs\antidoomscroll` and navigate to:
+2. **Mindful Pauses**
+   - **Breathing Exercise:** A quick 5-second guided breath to help reset focus.
+   - **Intent Check:** Prompts you to state what you originally opened your phone for before you continue.
+
+3. **Physical Checkpoints**
+   - Prompts you to do a quick physical action (like 5 squats or drinking a glass of water) using your camera or motion sensor to break the scroll trance.
+
+4. **Helpful Redirection**
+   - One-tap shortcuts to switch to productive apps instead (e.g., Kindle, Notion, or a bedtime sleep screen).
+
+5. **Bedtime Shield**
+   - Locks short-form video feeds during your set sleep hours (e.g., 10:30 PM to 7:00 AM).
+
+6. **Privacy First**
+   - Runs locally on your device. No browsing history or camera recordings are uploaded anywhere.
+
+---
+
+## How to Run the Prototype
+
+### Option 1: Open Directly
+Double-click `index.html` in your browser.
+
+### Option 2: Run with Localhost / XAMPP
+Place this folder in your web root (e.g., `c:\xampp\htdocs\antidoomscroll`) and visit:
 ```
 http://localhost/antidoomscroll
 ```
 
 ---
 
-## 🎯 Sustainable Development Goal (SDG) Alignment
-- **SDG 3: Good Health and Well-Being** &mdash; Restores circadian sleep hygiene and reduces anxiety spirals caused by infinite video loops.
-- **SDG 4: Quality Education** &mdash; Protects student focus blocks and deep work periods from algorithmic fragmentation.
-- **SDG 8: Decent Work and Economic Growth** &mdash; Reclaims productive deep-work capacity.
-
----
-
-## 📜 License
-Educational Capstone Project.
+## Project Context
+Developed as a capstone proposal prototype focusing on digital wellness, student focus, and better sleep habits.

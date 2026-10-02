@@ -1,11 +1,10 @@
 /**
- * ANTIDOOMSCROLL - Real Production-Grade Frontend Application
- * Physical Proof-of-Action Engine, Live Camera Verification,
- * Gesture-driven Feed Carousel, and In-App Habit Modals.
+ * ANTIDOOMSCROLL - Clean Web Prototype
+ * Logic for screen navigation, scroll detection, pause challenges, and habit shortcuts.
  */
 
-// Zen Audio Synthesizer via Web Audio API
-class ZenAudioEngine {
+// Simple Audio Synthesizer (Web Audio API)
+class SoundEffects {
   constructor() {
     this.ctx = null;
     this.enabled = true;
@@ -18,39 +17,66 @@ class ZenAudioEngine {
     }
   }
 
-  playZenChime() {
+  playChime() {
     if (!this.enabled) return;
     try {
       this.init();
       if (!this.ctx) return;
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(528, this.ctx.currentTime); // 528Hz Transformation Tone
-      osc.frequency.exponentialRampToValueAtTime(432, this.ctx.currentTime + 1.2);
-      
-      gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.6);
+      osc.frequency.setValueAtTime(520, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(390, this.ctx.currentTime + 0.8);
+
+      gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 1.6);
+      osc.stop(this.ctx.currentTime + 0.8);
     } catch (e) {}
   }
 
-  playSuccessBeep() {
+  playSuccess() {
     if (!this.enabled) return;
     try {
       this.init();
       if (!this.ctx) return;
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(580, this.ctx.currentTime);
-      osc.frequency.setValueAtTime(880, this.ctx.currentTime + 0.1);
-      
-      gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(520, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(780, this.ctx.currentTime + 0.1);
+
+      gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.3);
+    } catch (e) {}
+  }
+
+  playAlert() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(340, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(280, this.ctx.currentTime + 0.12);
+
+      gain.gain.setValueAtTime(0.16, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
 
       osc.connect(gain);
@@ -59,118 +85,184 @@ class ZenAudioEngine {
       osc.stop(this.ctx.currentTime + 0.35);
     } catch (e) {}
   }
-
-  playWarningChime() {
-    if (!this.enabled) return;
-    try {
-      this.init();
-      if (!this.ctx) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-      osc.frequency.setValueAtTime(260, this.ctx.currentTime + 0.15);
-      
-      gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.4);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.4);
-    } catch (e) {}
-  }
 }
 
-const audio = new ZenAudioEngine();
+const audio = new SoundEffects();
 
-// Application Master State
-const appState = {
-  currentTab: 'screen-shield',
-  currentVideoIndex: 0,
+// App State
+const state = {
+  activeScreen: 'screen-dashboard',
+  currentReelIndex: 0,
   swipeCount: 4,
-  velocityPercent: 32,
-  reclaimedMins: 134, // 2h 14m
-  loopsIntercepted: 18,
-  breathSeconds: 5,
+  scrollSpeedPercent: 32,
+  savedMins: 134, // 2h 14m
+  sessionsInterrupted: 18,
+  breathTimerVal: 5,
   breathInterval: null,
-  pauseMode: 'breath', // 'breath' | 'typed' | 'physical'
-  cameraStream: null,
-  currentPhysicalActivity: 'squats', // 'squats' | 'jacks' | 'desk' | 'water'
+  pauseMode: 'breath',
+  currentExercise: 'squats',
   repCount: 0,
   targetReps: 5,
-  isTaskVerified: false,
-  settings: {
-    continuousLimit: 10,
-    audioEnabled: true
-  }
+  cameraStream: null,
+  autoCountTimer: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupNavigation();
-  setupFeedCarousel();
-  setupCognitivePauseOverlay();
-  setupPhysicalCameraVerification();
-  setupHabitLauncherModals();
-  setupAnalyticsFilter();
-  setupSettingsSliders();
-  startClock();
+  setupTopDemoNav();
+  setupPhoneNav();
+  setupReelFeed();
+  setupPauseModal();
+  setupWorkoutCamera();
+  setupSimulatedAppModals();
+  setupSettings();
+  setupClock();
+  setupAboutModal();
 });
 
-// Clock Updater
-function startClock() {
-  const clockEl = document.getElementById('device-clock');
-  const sleepClock = document.getElementById('sleep-clock-display');
-  
-  function updateTime() {
-    const now = new Date();
-    let hrs = now.getHours();
-    let mins = now.getMinutes();
-    const str = `${hrs < 10 ? '0' + hrs : hrs}:${mins < 10 ? '0' + mins : mins}`;
-    if (clockEl) clockEl.textContent = str;
-    if (sleepClock) sleepClock.textContent = str;
+// =========================================================
+// TOP DEMO BAR (QUICK WALKTHROUGH BUTTONS)
+// =========================================================
+function setupTopDemoNav() {
+  const demoButtons = document.querySelectorAll('.demo-btn');
+  demoButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      demoButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const action = btn.getAttribute('data-action');
+      handleDemoAction(action);
+    });
+  });
+
+  const audioToggle = document.getElementById('btn-audio-toggle');
+  const audioText = document.getElementById('audio-btn-text');
+  if (audioToggle) {
+    audioToggle.addEventListener('click', () => {
+      audio.enabled = !audio.enabled;
+      if (audioText) audioText.textContent = audio.enabled ? "Sound ON" : "Sound OFF";
+      const settingToggle = document.getElementById('setting-sound-toggle');
+      if (settingToggle) settingToggle.checked = audio.enabled;
+      showToast(audio.enabled ? "Sound effects enabled" : "Sound effects muted");
+    });
   }
-  updateTime();
-  setInterval(updateTime, 10000);
 }
 
-// Navigation Tabs
-function setupNavigation() {
-  document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+function handleDemoAction(action) {
+  switch (action) {
+    case 'dashboard':
+      closePauseModal();
+      closeSimModals();
+      showScreen('screen-dashboard');
+      break;
+
+    case 'feed':
+      closePauseModal();
+      closeSimModals();
+      showScreen('screen-feed');
+      break;
+
+    case 'trigger-pause':
+      showScreen('screen-feed');
+      audio.playAlert();
+      openPauseModal("Continuous scroll limit reached!");
+      break;
+
+    case 'breathing':
+      showScreen('screen-feed');
+      openPauseModal("Breathing pause");
+      setPauseTab('breath');
+      break;
+
+    case 'intent':
+      showScreen('screen-feed');
+      openPauseModal("State your intention");
+      setPauseTab('intent');
+      const input = document.getElementById('intent-input');
+      if (input) {
+        input.value = "I just came to reply to a message";
+        const actions = document.getElementById('pause-action-buttons');
+        if (actions) {
+          actions.style.opacity = '1';
+          actions.style.pointerEvents = 'all';
+        }
+      }
+      break;
+
+    case 'workout':
+      showScreen('screen-feed');
+      openPauseModal("Physical workout check");
+      setPauseTab('workout');
+      autoCountReps();
+      break;
+
+    case 'habits':
+      closePauseModal();
+      showScreen('screen-habits');
+      openSimModal('modal-kindle');
+      break;
+
+    case 'stats':
+      closePauseModal();
+      closeSimModals();
+      showScreen('screen-stats');
+      break;
+  }
+}
+
+// =========================================================
+// PHONE SCREEN NAVIGATION
+// =========================================================
+function setupPhoneNav() {
+  document.querySelectorAll('.nav-item-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const tabId = btn.getAttribute('data-tab');
-      if (tabId) switchTab(tabId);
+      const screenId = btn.getAttribute('data-screen');
+      if (screenId) {
+        showScreen(screenId);
+        updateTopNavActive(screenId);
+      }
     });
   });
 }
 
-function switchTab(tabId) {
-  appState.currentTab = tabId;
+function showScreen(screenId) {
+  state.activeScreen = screenId;
 
   document.querySelectorAll('.app-screen').forEach(screen => {
-    screen.classList.remove('active-screen');
+    screen.classList.remove('active');
   });
-  const targetScreen = document.getElementById(tabId);
-  if (targetScreen) targetScreen.classList.add('active-screen');
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
 
-  document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+  document.querySelectorAll('.nav-item-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-screen') === screenId);
   });
 
-  if (tabId !== 'screen-feed') {
-    closeCognitivePause();
+  if (screenId !== 'screen-feed') {
+    closePauseModal();
   }
 }
 
-// Multi-Video Feed with Gesture & Drag Physics
-function setupFeedCarousel() {
-  const carousel = document.getElementById('feed-video-carousel');
-  const cards = document.querySelectorAll('.reel-card-item');
-  const flickBtn = document.getElementById('btn-hud-flick');
-  const triggerBtn = document.getElementById('btn-hud-trigger');
-  const velocityBar = document.getElementById('hud-velocity-fill');
-  const velocityText = document.getElementById('hud-velocity-num');
-  const swipeCountBadge = document.getElementById('hud-swipe-count');
+function updateTopNavActive(screenId) {
+  document.querySelectorAll('.demo-btn').forEach(btn => {
+    const action = btn.getAttribute('data-action');
+    if (screenId === 'screen-dashboard' && action === 'dashboard') btn.classList.add('active');
+    else if (screenId === 'screen-feed' && action === 'feed') btn.classList.add('active');
+    else if (screenId === 'screen-habits' && action === 'habits') btn.classList.add('active');
+    else if (screenId === 'screen-stats' && action === 'stats') btn.classList.add('active');
+    else btn.classList.remove('active');
+  });
+}
+
+// =========================================================
+// SHORT REEL FEED SIMULATOR
+// =========================================================
+function setupReelFeed() {
+  const carousel = document.getElementById('feed-carousel');
+  const cards = document.querySelectorAll('.reel-card');
+  const flickBtn = document.getElementById('btn-flick-reel');
+  const triggerBtn = document.getElementById('btn-trigger-pause-test');
+  const speedFill = document.getElementById('hud-speed-fill');
+  const speedText = document.getElementById('hud-swipe-text');
 
   let startY = 0;
   let startTime = 0;
@@ -190,519 +282,603 @@ function setupFeedCarousel() {
       const duration = Date.now() - startTime;
       const deltaY = endY - startY;
 
-      handleSwipeAction(deltaY, duration);
+      if (Math.abs(deltaY) > 35 && duration < 600) {
+        if (deltaY < 0) nextReel(1);
+        else nextReel(-1);
+        registerSwipe();
+      }
     });
 
     carousel.addEventListener('touchstart', (e) => {
       startY = e.touches[0].clientY;
       startTime = Date.now();
-    });
+    }, { passive: true });
 
     carousel.addEventListener('touchend', (e) => {
       const endY = e.changedTouches[0].clientY;
       const duration = Date.now() - startTime;
       const deltaY = endY - startY;
 
-      handleSwipeAction(deltaY, duration);
-    });
+      if (Math.abs(deltaY) > 35 && duration < 600) {
+        if (deltaY < 0) nextReel(1);
+        else nextReel(-1);
+        registerSwipe();
+      }
+    }, { passive: true });
 
     carousel.addEventListener('wheel', (e) => {
       e.preventDefault();
       if (e.deltaY > 20) {
-        changeReel(1);
-        recordFlick(55);
+        nextReel(1);
+        registerSwipe();
       } else if (e.deltaY < -20) {
-        changeReel(-1);
-        recordFlick(55);
+        nextReel(-1);
+        registerSwipe();
       }
     }, { passive: false });
   }
 
-  function handleSwipeAction(deltaY, duration) {
-    if (Math.abs(deltaY) > 40 && duration < 500) {
-      const velocity = Math.abs(deltaY) / duration;
-      const computedFlickScore = Math.min(100, Math.round(velocity * 80));
-
-      if (deltaY < 0) {
-        changeReel(1);
-      } else {
-        changeReel(-1);
-      }
-
-      recordFlick(computedFlickScore);
-    }
+  function nextReel(direction) {
+    if (!cards.length) return;
+    cards[state.currentReelIndex].className = direction > 0 ? 'reel-card prev' : 'reel-card next';
+    state.currentReelIndex += direction;
+    if (state.currentReelIndex >= cards.length) state.currentReelIndex = 0;
+    if (state.currentReelIndex < 0) state.currentReelIndex = cards.length - 1;
+    cards[state.currentReelIndex].className = 'reel-card current';
   }
 
-  function changeReel(direction) {
-    cards[appState.currentVideoIndex].className = direction > 0 ? 'reel-card-item prev' : 'reel-card-item next';
+  function registerSwipe() {
+    state.swipeCount++;
+    state.scrollSpeedPercent = Math.min(100, state.scrollSpeedPercent + 18);
 
-    appState.currentVideoIndex += direction;
-    if (appState.currentVideoIndex >= cards.length) appState.currentVideoIndex = 0;
-    if (appState.currentVideoIndex < 0) appState.currentVideoIndex = cards.length - 1;
-
-    cards[appState.currentVideoIndex].className = 'reel-card-item current';
-  }
-
-  function recordFlick(score) {
-    appState.swipeCount++;
-    appState.velocityPercent = Math.min(100, appState.velocityPercent + Math.max(18, score));
-
-    if (swipeCountBadge) swipeCountBadge.textContent = `${appState.swipeCount} Swipes / 30s`;
-    if (velocityText) velocityText.textContent = `${appState.velocityPercent}%`;
-
-    if (velocityBar) {
-      velocityBar.style.width = `${appState.velocityPercent}%`;
-      if (appState.velocityPercent >= 75) {
-        velocityBar.style.background = 'linear-gradient(90deg, #F59E0B, #F43F5E)';
+    if (speedText) speedText.textContent = `${state.swipeCount} Swipes / 30s`;
+    if (speedFill) {
+      speedFill.style.width = `${state.scrollSpeedPercent}%`;
+      if (state.scrollSpeedPercent >= 75) {
+        speedFill.style.backgroundColor = '#EF4444';
       }
     }
 
-    if (appState.velocityPercent >= 85) {
-      audio.playWarningChime();
+    if (state.scrollSpeedPercent >= 85) {
+      audio.playAlert();
       setTimeout(() => {
-        openCognitivePause("Swipe velocity threshold breached (compulsive micro-flicking detected)!");
-      }, 350);
+        openPauseModal("Fast scrolling detected!");
+      }, 300);
     }
   }
 
   if (flickBtn) {
     flickBtn.addEventListener('click', () => {
-      changeReel(1);
-      recordFlick(26);
+      nextReel(1);
+      registerSwipe();
     });
   }
 
   if (triggerBtn) {
     triggerBtn.addEventListener('click', () => {
-      audio.playWarningChime();
-      openCognitivePause("10-minute continuous feed limit reached!");
+      audio.playAlert();
+      openPauseModal("10-minute continuous scroll limit reached!");
     });
   }
 }
 
-// Cognitive Pause Overlay with 3 Modes: Breath, Typed, Physical Camera Proof
-function setupCognitivePauseOverlay() {
-  const tabBreath = document.getElementById('pause-tab-breath');
-  const tabTyped = document.getElementById('pause-tab-typed');
-  const tabPhysical = document.getElementById('pause-tab-physical');
+// =========================================================
+// PAUSE MODAL (BREATH, INTENT, WORKOUT)
+// =========================================================
+function setupPauseModal() {
+  const btnBreath = document.getElementById('tab-btn-breath');
+  const btnIntent = document.getElementById('tab-btn-intent');
+  const btnWorkout = document.getElementById('tab-btn-workout');
 
-  const panelBreath = document.getElementById('panel-breath');
-  const panelTyped = document.getElementById('panel-typed');
-  const panelPhysical = document.getElementById('panel-physical');
+  if (btnBreath) btnBreath.addEventListener('click', () => setPauseTab('breath'));
+  if (btnIntent) btnIntent.addEventListener('click', () => setPauseTab('intent'));
+  if (btnWorkout) btnWorkout.addEventListener('click', () => setPauseTab('workout'));
 
-  const btnExit = document.getElementById('btn-pause-exit');
-  const btnRedirect = document.getElementById('btn-pause-redirect');
-  const btnSnooze = document.getElementById('btn-pause-snooze');
-  const typedInput = document.getElementById('typed-intent-input');
+  const intentInput = document.getElementById('intent-input');
+  const actions = document.getElementById('pause-action-buttons');
 
-  function setMode(mode) {
-    appState.pauseMode = mode;
-    [tabBreath, tabTyped, tabPhysical].forEach(t => t && t.classList.remove('active'));
-    [panelBreath, panelTyped, panelPhysical].forEach(p => {
-      if (p) {
-        p.style.display = 'none';
-        p.classList.remove('active');
-      }
-    });
-
-    if (mode === 'breath') {
-      tabBreath.classList.add('active');
-      panelBreath.style.display = 'flex';
-      stopCameraStream();
-    } else if (mode === 'typed') {
-      tabTyped.classList.add('active');
-      panelTyped.style.display = 'flex';
-      panelTyped.classList.add('active');
-      stopCameraStream();
-    } else if (mode === 'physical') {
-      tabPhysical.classList.add('active');
-      panelPhysical.style.display = 'flex';
-      panelPhysical.classList.add('active');
-      startCameraStream();
-    }
-  }
-
-  if (tabBreath) tabBreath.addEventListener('click', () => setMode('breath'));
-  if (tabTyped) tabTyped.addEventListener('click', () => setMode('typed'));
-  if (tabPhysical) tabPhysical.addEventListener('click', () => setMode('physical'));
-
-  // Typed input active unlock
-  if (typedInput) {
-    typedInput.addEventListener('input', (e) => {
-      const actions = document.getElementById('intent-action-buttons');
-      if (e.target.value.trim().length >= 4) {
-        if (actions) {
-          actions.style.opacity = '1';
-          actions.style.pointerEvents = 'all';
-        }
+  if (intentInput) {
+    intentInput.addEventListener('input', (e) => {
+      if (e.target.value.trim().length >= 3 && actions) {
+        actions.style.opacity = '1';
+        actions.style.pointerEvents = 'all';
       }
     });
   }
 
-  // Reflection Suggestion Pills
-  document.querySelectorAll('.intent-pill-btn').forEach(pill => {
-    pill.addEventListener('click', () => {
-      const text = pill.getAttribute('data-text');
-      if (typedInput) {
-        typedInput.value = text;
-        const actions = document.getElementById('intent-action-buttons');
+  document.querySelectorAll('.intent-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.getAttribute('data-text');
+      if (intentInput) {
+        intentInput.value = text;
         if (actions) {
           actions.style.opacity = '1';
           actions.style.pointerEvents = 'all';
         }
-        audio.playZenChime();
+        audio.playChime();
       }
     });
   });
 
-  if (btnExit) {
-    btnExit.addEventListener('click', () => {
-      closeCognitivePause();
-      audio.playZenChime();
-      showToast("App closed. Bedtime routine saved! 🌙 (+15m focus)");
-      appState.reclaimedMins += 15;
-      appState.loopsIntercepted += 1;
-      updateDashboardStats();
-      switchTab('screen-shield');
+  const btnCloseApp = document.getElementById('btn-pause-close-app');
+  const btnGoHabits = document.getElementById('btn-pause-go-habits');
+  const btnSnooze = document.getElementById('btn-pause-snooze-3m');
+
+  if (btnCloseApp) {
+    btnCloseApp.addEventListener('click', () => {
+      closePauseModal();
+      audio.playChime();
+      showToast("App closed. Sleep time protected! (+15m)");
+      state.savedMins += 15;
+      state.sessionsInterrupted += 1;
+      updateStats();
+      showScreen('screen-dashboard');
     });
   }
 
-  if (btnRedirect) {
-    btnRedirect.addEventListener('click', () => {
-      closeCognitivePause();
-      switchTab('screen-habits');
+  if (btnGoHabits) {
+    btnGoHabits.addEventListener('click', () => {
+      closePauseModal();
+      showScreen('screen-habits');
     });
   }
 
   if (btnSnooze) {
     btnSnooze.addEventListener('click', () => {
-      alert("⚠️ Diminishing Extension Policy:\nYou received +3 emergency minutes. Notice: The next pause will enforce a mandatory 20-second pause to prevent relapse.");
-      closeCognitivePause();
-      appState.velocityPercent = 35;
+      alert("Notice: You received 3 extra minutes. The next pause will require a 20-second break.");
+      closePauseModal();
+      state.scrollSpeedPercent = 35;
+      const speedFill = document.getElementById('hud-speed-fill');
+      if (speedFill) {
+        speedFill.style.width = '35%';
+        speedFill.style.backgroundColor = '#10B981';
+      }
     });
   }
 }
 
-// Physical Camera Verification (WebRTC getUserMedia + Simulated AI Pose Estimator)
-function setupPhysicalCameraVerification() {
-  const videoElem = document.getElementById('camera-feed-video');
-  const btnTrackReps = document.getElementById('btn-track-reps');
-  const btnSnapProof = document.getElementById('btn-snap-proof');
-  const repBadge = document.getElementById('camera-rep-count');
-  const taskTitle = document.getElementById('camera-task-name');
-  const successBanner = document.getElementById('proof-success-banner');
-  const actions = document.getElementById('intent-action-buttons');
+function setPauseTab(tab) {
+  state.pauseMode = tab;
 
-  // Physical Activity Pills
-  document.querySelectorAll('.activity-pill-btn').forEach(pill => {
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('.activity-pill-btn').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
+  const btnBreath = document.getElementById('tab-btn-breath');
+  const btnIntent = document.getElementById('tab-btn-intent');
+  const btnWorkout = document.getElementById('tab-btn-workout');
 
-      const activity = pill.getAttribute('data-activity');
-      appState.currentPhysicalActivity = activity;
-      appState.repCount = 0;
-      appState.isTaskVerified = false;
-      if (successBanner) successBanner.classList.remove('active');
+  const panelBreath = document.getElementById('panel-breath');
+  const panelIntent = document.getElementById('panel-intent');
+  const panelWorkout = document.getElementById('panel-workout');
 
-      if (activity === 'squats') {
-        appState.targetReps = 5;
-        if (taskTitle) taskTitle.textContent = "AI Task: 5 Squats Verification";
-        if (repBadge) repBadge.textContent = "Reps: 0/5";
-      } else if (activity === 'jacks') {
-        appState.targetReps = 10;
-        if (taskTitle) taskTitle.textContent = "AI Task: 10 Jumping Jacks";
-        if (repBadge) repBadge.textContent = "Reps: 0/10";
-      } else if (activity === 'desk') {
-        appState.targetReps = 1;
-        if (taskTitle) taskTitle.textContent = "Chore: Tidy Desk Snapshot";
+  [btnBreath, btnIntent, btnWorkout].forEach(b => b && b.classList.remove('active'));
+  [panelBreath, panelIntent, panelWorkout].forEach(p => {
+    if (p) {
+      p.style.display = 'none';
+      p.classList.remove('active');
+    }
+  });
+
+  if (tab === 'breath') {
+    if (btnBreath) btnBreath.classList.add('active');
+    if (panelBreath) panelBreath.style.display = 'flex';
+    stopCamera();
+    startBreathCycle();
+  } else if (tab === 'intent') {
+    if (btnIntent) btnIntent.classList.add('active');
+    if (panelIntent) {
+      panelIntent.style.display = 'flex';
+      panelIntent.classList.add('active');
+    }
+    stopCamera();
+  } else if (tab === 'workout') {
+    if (btnWorkout) btnWorkout.classList.add('active');
+    if (panelWorkout) {
+      panelWorkout.style.display = 'flex';
+      panelWorkout.classList.add('active');
+    }
+    startCamera();
+  }
+}
+
+function openPauseModal(msg) {
+  const modal = document.getElementById('pause-modal');
+  const subtitle = document.getElementById('pause-subtitle');
+  if (subtitle && msg) subtitle.textContent = msg;
+  if (modal) {
+    modal.classList.add('active');
+    setPauseTab(state.pauseMode || 'breath');
+    audio.playChime();
+  }
+}
+
+function closePauseModal() {
+  const modal = document.getElementById('pause-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    stopBreathCycle();
+    stopCamera();
+    if (state.autoCountTimer) clearInterval(state.autoCountTimer);
+  }
+}
+
+function startBreathCycle() {
+  stopBreathCycle();
+  state.breathTimerVal = 5;
+
+  const countEl = document.getElementById('breath-count');
+  const phaseEl = document.getElementById('breath-phase');
+  const circleEl = document.getElementById('breath-circle');
+  const actions = document.getElementById('pause-action-buttons');
+
+  if (actions) {
+    actions.style.opacity = '0.4';
+    actions.style.pointerEvents = 'none';
+  }
+
+  if (circleEl) circleEl.classList.add('inhale');
+  if (phaseEl) phaseEl.textContent = 'Breathe in slowly...';
+  if (countEl) countEl.textContent = '5s';
+
+  state.breathInterval = setInterval(() => {
+    state.breathTimerVal--;
+    if (countEl) countEl.textContent = `${state.breathTimerVal}s`;
+
+    if (state.breathTimerVal === 3) {
+      if (phaseEl) phaseEl.textContent = 'Hold...';
+    } else if (state.breathTimerVal === 1) {
+      if (phaseEl) phaseEl.textContent = 'Breathe out...';
+      if (circleEl) circleEl.classList.remove('inhale');
+    }
+
+    if (state.breathTimerVal <= 0) {
+      clearInterval(state.breathInterval);
+      if (countEl) countEl.textContent = 'OK';
+      if (phaseEl) phaseEl.textContent = 'Focus restored';
+      if (actions) {
+        actions.style.opacity = '1';
+        actions.style.pointerEvents = 'all';
+      }
+      audio.playChime();
+    }
+  }, 1000);
+}
+
+function stopBreathCycle() {
+  if (state.breathInterval) clearInterval(state.breathInterval);
+  const countEl = document.getElementById('breath-count');
+  const phaseEl = document.getElementById('breath-phase');
+  const circleEl = document.getElementById('breath-circle');
+
+  if (countEl) countEl.textContent = '5s';
+  if (phaseEl) phaseEl.textContent = 'Take a breath';
+  if (circleEl) circleEl.classList.remove('inhale');
+}
+
+// =========================================================
+// PHYSICAL WORKOUT & CAMERA CHECKPOINT
+// =========================================================
+function setupWorkoutCamera() {
+  const btnRep = document.getElementById('btn-count-rep');
+  const btnAuto = document.getElementById('btn-auto-reps');
+  const btnPhoto = document.getElementById('btn-snap-photo');
+  const repBadge = document.getElementById('workout-rep-count');
+  const taskTitle = document.getElementById('workout-task-title');
+  const frameIconWrap = document.getElementById('posture-icon-wrap');
+
+  const exerciseIcons = {
+    'squats': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="M15 8h-6l-2 5 3 2v6h2v-5l2-2 3 1v-3z"/></svg>',
+    'jacks': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M6 20v-4M4 18h4M18 4v4M16 6h4M3 8l3-3M18 21l3-3M8 3l-3 3M21 16l-3 3"/></svg>',
+    'desk': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 3l3 3-10 10-3-3z"/><path d="M11 13l-4 4-2-2 4-4"/><path d="M3 21h4l2-2-4-4z"/></svg>',
+    'water': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>'
+  };
+
+  document.querySelectorAll('.exercise-btn[data-ex]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.exercise-btn[data-ex]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const ex = btn.getAttribute('data-ex');
+      state.currentExercise = ex;
+      state.repCount = 0;
+
+      const banner = document.getElementById('verification-banner');
+      if (banner) banner.classList.remove('active');
+
+      if (frameIconWrap && exerciseIcons[ex]) {
+        frameIconWrap.innerHTML = exerciseIcons[ex];
+      }
+
+      if (ex === 'squats') {
+        state.targetReps = 5;
+        if (taskTitle) taskTitle.textContent = "Task: 5 Squats";
+        if (repBadge) repBadge.textContent = "0 / 5";
+      } else if (ex === 'jacks') {
+        state.targetReps = 10;
+        if (taskTitle) taskTitle.textContent = "Task: 10 Jumping Jacks";
+        if (repBadge) repBadge.textContent = "0 / 10";
+      } else if (ex === 'desk') {
+        state.targetReps = 1;
+        if (taskTitle) taskTitle.textContent = "Task: Tidy Desk Photo";
         if (repBadge) repBadge.textContent = "Take Photo";
-      } else if (activity === 'water') {
-        appState.targetReps = 1;
-        if (taskTitle) taskTitle.textContent = "Health: Drink Glass of Water";
+      } else if (ex === 'water') {
+        state.targetReps = 1;
+        if (taskTitle) taskTitle.textContent = "Task: Drink Water";
         if (repBadge) repBadge.textContent = "Hydrate & Verify";
       }
     });
   });
 
-  // Track Reps Simulation
-  if (btnTrackReps) {
-    btnTrackReps.addEventListener('click', () => {
-      if (appState.repCount < appState.targetReps) {
-        appState.repCount++;
-        audio.playSuccessBeep();
-        if (repBadge) repBadge.textContent = `Reps: ${appState.repCount}/${appState.targetReps}`;
-
-        // Visual skeleton pulse
-        const skeleton = document.getElementById('ai-pose-box');
-        if (skeleton) {
-          skeleton.style.borderColor = '#10B981';
-          skeleton.style.transform = 'translate(-50%, -48%) scale(1.06)';
-          setTimeout(() => {
-            skeleton.style.borderColor = '#06B6D4';
-            skeleton.style.transform = 'translate(-50%, -50%) scale(1)';
-          }, 200);
-        }
-
-        if (appState.repCount >= appState.targetReps) {
-          verifyPhysicalTaskSuccess("Physical Workout Verified by AI Vision! Focus restored 🏋️");
-        }
-      }
+  if (btnRep) {
+    btnRep.addEventListener('click', () => {
+      recordSingleRep();
     });
   }
 
-  // Snap Proof of Chore / Task
-  if (btnSnapProof) {
-    btnSnapProof.addEventListener('click', () => {
-      audio.playSuccessBeep();
-      verifyPhysicalTaskSuccess("Chore & Physical Proof Snapshot Verified! 📸");
+  if (btnAuto) {
+    btnAuto.addEventListener('click', () => {
+      autoCountReps();
     });
   }
 
-  function verifyPhysicalTaskSuccess(msg) {
-    appState.isTaskVerified = true;
-    audio.playZenChime();
-    if (successBanner) {
-      successBanner.classList.add('active');
-    }
-    if (actions) {
-      actions.style.opacity = '1';
-      actions.style.pointerEvents = 'all';
-    }
-    showToast(msg);
-    logPhysicalTaskSession(appState.currentPhysicalActivity);
+  if (btnPhoto) {
+    btnPhoto.addEventListener('click', () => {
+      audio.playSuccess();
+      completeWorkoutSuccess("Photo registered and verified!");
+    });
   }
 }
 
-// Start Live Webcam Stream with fallback
-function startCameraStream() {
-  const videoElem = document.getElementById('camera-feed-video');
-  const simulatedFallback = document.getElementById('camera-simulated-bg');
+function recordSingleRep() {
+  const repBadge = document.getElementById('workout-rep-count');
+  const frame = document.getElementById('posture-frame');
+
+  if (state.repCount < state.targetReps) {
+    state.repCount++;
+    audio.playSuccess();
+    if (repBadge) repBadge.textContent = `${state.repCount} / ${state.targetReps}`;
+
+    if (frame) {
+      frame.classList.add('pulse');
+      setTimeout(() => frame.classList.remove('pulse'), 250);
+    }
+
+    if (state.repCount >= state.targetReps) {
+      completeWorkoutSuccess("Workout completed!");
+    }
+  }
+}
+
+function autoCountReps() {
+  if (state.autoCountTimer) clearInterval(state.autoCountTimer);
+  state.repCount = 0;
+  const repBadge = document.getElementById('workout-rep-count');
+  if (repBadge) repBadge.textContent = `0 / ${state.targetReps}`;
+
+  state.autoCountTimer = setInterval(() => {
+    recordSingleRep();
+    if (state.repCount >= state.targetReps) {
+      clearInterval(state.autoCountTimer);
+    }
+  }, 700);
+}
+
+function completeWorkoutSuccess(msg) {
+  audio.playChime();
+  const banner = document.getElementById('verification-banner');
+  const actions = document.getElementById('pause-action-buttons');
+
+  if (banner) banner.classList.add('active');
+  if (actions) {
+    actions.style.opacity = '1';
+    actions.style.pointerEvents = 'all';
+  }
+  showToast(msg);
+  logActivity(state.currentExercise);
+}
+
+function startCamera() {
+  const video = document.getElementById('camera-video');
+  const simBg = document.getElementById('camera-sim-bg');
+  const status = document.getElementById('cam-status');
 
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
       .then(stream => {
-        appState.cameraStream = stream;
-        if (videoElem) {
-          videoElem.srcObject = stream;
-          videoElem.style.display = 'block';
-          if (simulatedFallback) simulatedFallback.style.display = 'none';
+        state.cameraStream = stream;
+        if (video) {
+          video.srcObject = stream;
+          video.style.display = 'block';
         }
+        if (simBg) simBg.style.display = 'none';
+        if (status) status.textContent = "Camera: Active";
       })
-      .catch(err => {
-        console.warn("Camera access denied or unavailable, using AI Vision simulator feed:", err);
-        if (videoElem) videoElem.style.display = 'none';
-        if (simulatedFallback) simulatedFallback.style.display = 'block';
+      .catch(() => {
+        if (video) video.style.display = 'none';
+        if (simBg) simBg.style.display = 'block';
+        if (status) status.textContent = "Motion Mode: Ready";
       });
   } else {
-    if (videoElem) videoElem.style.display = 'none';
-    if (simulatedFallback) simulatedFallback.style.display = 'block';
+    if (video) video.style.display = 'none';
+    if (simBg) simBg.style.display = 'block';
+    if (status) status.textContent = "Motion Mode: Ready";
   }
 }
 
-function stopCameraStream() {
-  if (appState.cameraStream) {
-    appState.cameraStream.getTracks().forEach(track => track.stop());
-    appState.cameraStream = null;
+function stopCamera() {
+  if (state.cameraStream) {
+    state.cameraStream.getTracks().forEach(track => track.stop());
+    state.cameraStream = null;
   }
 }
 
-// Log Completed Physical Task to Dashboard History
-function logPhysicalTaskSession(activityName) {
-  const sessionList = document.querySelector('.session-log-list');
-  if (sessionList) {
-    const newItem = document.createElement('div');
-    newItem.className = 'session-log-item';
-    newItem.innerHTML = `
-      <div class="session-left">
-        <div class="session-app-icon" style="background:#10B981;">🏃</div>
-        <div class="session-details">
-          <h5>Physical Proof &bull; ${activityName.toUpperCase()}</h5>
-          <p>Camera Verified &bull; Dopamine Loop Broken</p>
+function logActivity(name) {
+  const list = document.getElementById('activity-log-list');
+  if (list) {
+    const item = document.createElement('div');
+    item.className = 'activity-item';
+    item.innerHTML = `
+      <div class="activity-left">
+        <div class="activity-icon-box" style="background:#10B981; color:#022c22;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="M15 8h-6l-2 5 3 2v6h2v-5l2-2 3 1v-3z"/></svg>
+        </div>
+        <div class="activity-text">
+          <h5>${name.toUpperCase()} Completed</h5>
+          <p>Verified with motion sensor &bull; Pause cleared</p>
         </div>
       </div>
-      <span class="session-reclaimed-badge">+20m Saved</span>
+      <span class="time-saved-badge">+20m saved</span>
     `;
-    sessionList.prepend(newItem);
+    list.prepend(item);
   }
 }
 
-function openCognitivePause(reason) {
-  const modal = document.getElementById('cognitive-pause-overlay');
-  if (modal) {
-    modal.classList.add('active');
-    startBreathChallenge();
-    audio.playZenChime();
-  }
-}
-
-function closeCognitivePause() {
-  const modal = document.getElementById('cognitive-pause-overlay');
-  if (modal) {
-    modal.classList.remove('active');
-    stopBreathChallenge();
-    stopCameraStream();
-  }
-}
-
-function startBreathChallenge() {
-  stopBreathChallenge();
-  appState.breathSeconds = 5;
-
-  const countdownEl = document.getElementById('breath-timer-val');
-  const phaseEl = document.getElementById('breath-phase-text');
-  const ringEl = document.getElementById('breath-ring-element');
-  const actions = document.getElementById('intent-action-buttons');
-
-  if (actions && !appState.isTaskVerified) {
-    actions.style.opacity = '0.35';
-    actions.style.pointerEvents = 'none';
-  }
-
-  if (ringEl) ringEl.classList.add('inhale');
-  if (phaseEl) phaseEl.textContent = 'Inhale deeply...';
-  if (countdownEl) countdownEl.textContent = '5s';
-
-  appState.breathInterval = setInterval(() => {
-    appState.breathSeconds--;
-    if (countdownEl) countdownEl.textContent = `${appState.breathSeconds}s`;
-
-    if (appState.breathSeconds === 3) {
-      if (phaseEl) phaseEl.textContent = 'Hold & Center...';
-    } else if (appState.breathSeconds === 1) {
-      if (phaseEl) phaseEl.textContent = 'Exhale softly...';
-      if (ringEl) ringEl.classList.remove('inhale');
-    }
-
-    if (appState.breathSeconds <= 0) {
-      clearInterval(appState.breathInterval);
-      if (countdownEl) countdownEl.textContent = '✓';
-      if (phaseEl) phaseEl.textContent = 'Consciousness Restored';
-      if (actions) {
-        actions.style.opacity = '1';
-        actions.style.pointerEvents = 'all';
-      }
-      audio.playZenChime();
-    }
-  }, 1000);
-}
-
-function stopBreathChallenge() {
-  if (appState.breathInterval) clearInterval(appState.breathInterval);
-  const countdownEl = document.getElementById('breath-timer-val');
-  const phaseEl = document.getElementById('breath-phase-text');
-  const ringEl = document.getElementById('breath-ring-element');
-  const actions = document.getElementById('intent-action-buttons');
-
-  if (countdownEl) countdownEl.textContent = '5s';
-  if (phaseEl) phaseEl.textContent = 'Take a conscious breath';
-  if (ringEl) ringEl.classList.remove('inhale');
-  if (actions && !appState.isTaskVerified) {
-    actions.style.opacity = '0.35';
-    actions.style.pointerEvents = 'none';
-  }
-}
-
-// In-App Simulated Habit Apps (Kindle Reader, Notion, Meditation, Sleep Shield)
-function setupHabitLauncherModals() {
-  document.querySelectorAll('.habit-app-tile').forEach(tile => {
-    tile.addEventListener('click', () => {
-      const modalId = tile.getAttribute('data-modal');
-      if (modalId) {
-        openSimulatedApp(modalId);
-      }
+// =========================================================
+// IN-APP SIMULATED MODALS (KINDLE, NOTION, BREATHWORK, SLEEP)
+// =========================================================
+function setupSimulatedAppModals() {
+  document.querySelectorAll('.habit-card[data-sim]').forEach(card => {
+    card.addEventListener('click', () => {
+      const modalId = card.getAttribute('data-sim');
+      if (modalId) openSimModal(modalId);
     });
   });
 
-  document.querySelectorAll('.btn-close-sim-app').forEach(btn => {
+  document.querySelectorAll('.btn-close-sim').forEach(btn => {
     btn.addEventListener('click', () => {
-      closeAllSimulatedApps();
+      closeSimModals();
     });
   });
 }
 
-function openSimulatedApp(modalId) {
-  closeAllSimulatedApps();
-  const targetModal = document.getElementById(modalId);
-  if (targetModal) {
-    targetModal.classList.add('active');
-    audio.playZenChime();
+function openSimModal(id) {
+  closeSimModals();
+  const target = document.getElementById(id);
+  if (target) {
+    target.classList.add('active');
+    audio.playChime();
   }
 }
 
-function closeAllSimulatedApps() {
-  document.querySelectorAll('.simulated-app-modal').forEach(m => m.classList.remove('active'));
+function closeSimModals() {
+  document.querySelectorAll('.sim-modal').forEach(m => m.classList.remove('active'));
 }
 
-// Analytics Filter Switcher (Day / Week / Month)
-function setupAnalyticsFilter() {
-  const filterBtns = document.querySelectorAll('.filter-tab-btn');
-  const chartPillars = document.querySelectorAll('.bar-fill-rectangle');
+// =========================================================
+// SETTINGS
+// =========================================================
+function setupSettings() {
+  const slider = document.getElementById('setting-scroll-slider');
+  const label = document.getElementById('slider-val-label');
+  const soundToggle = document.getElementById('setting-sound-toggle');
 
-  const sampleHeights = {
-    'day': ['30px', '45px', '70px', '85px', '60px', '95px', '100px'],
-    'week': ['48px', '62px', '38px', '76px', '52px', '82px', '92px'],
-    'month': ['75px', '80px', '65px', '90px', '85px', '95px', '90px']
-  };
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const filter = btn.getAttribute('data-filter') || 'week';
-      const heights = sampleHeights[filter] || sampleHeights['week'];
-
-      chartPillars.forEach((pillar, idx) => {
-        if (heights[idx]) pillar.style.height = heights[idx];
-      });
-      showToast(`Showing ${filter.toUpperCase()} reclaimed focus analytics`);
-    });
-  });
-}
-
-// Settings Sliders & Toggles
-function setupSettingsSliders() {
-  const limitRange = document.getElementById('setting-continuous-range');
-  const limitDisplay = document.getElementById('setting-continuous-val');
-  const audioSwitch = document.getElementById('setting-audio-switch');
-
-  if (limitRange && limitDisplay) {
-    limitRange.addEventListener('input', (e) => {
-      const val = e.target.value;
-      limitDisplay.textContent = `${val} min`;
-      appState.settings.continuousLimit = parseInt(val, 10);
+  if (slider && label) {
+    slider.addEventListener('input', (e) => {
+      label.textContent = `${e.target.value} min`;
     });
   }
 
-  if (audioSwitch) {
-    audioSwitch.addEventListener('change', (e) => {
+  if (soundToggle) {
+    soundToggle.addEventListener('change', (e) => {
       audio.enabled = e.target.checked;
-      showToast(audio.enabled ? "Zen Audio chimes enabled" : "Zen Audio muted");
+      const audioText = document.getElementById('audio-btn-text');
+      if (audioText) audioText.textContent = audio.enabled ? "Sound ON" : "Sound OFF";
+    });
+  }
+
+  const uninstallRow = document.getElementById('setting-uninstall-row');
+  const adminModal = document.getElementById('admin-protection-modal');
+  const btnCloseAdmin = document.getElementById('btn-close-admin');
+
+  if (uninstallRow && adminModal) {
+    uninstallRow.addEventListener('click', () => {
+      adminModal.classList.add('open');
+      audio.playChime();
+    });
+  }
+
+  if (btnCloseAdmin && adminModal) {
+    btnCloseAdmin.addEventListener('click', () => {
+      adminModal.classList.remove('open');
+    });
+  }
+
+  if (adminModal) {
+    adminModal.addEventListener('click', (e) => {
+      if (e.target === adminModal) adminModal.classList.remove('open');
+    });
+  }
+
+  const strictRow = document.getElementById('setting-strict-row');
+  if (strictRow) {
+    strictRow.addEventListener('click', () => {
+      audio.playChime();
+      showToast("Strict Task Lockout is permanently active (zero bypass)");
     });
   }
 }
 
-// Update Top Dashboard Statistics
-function updateDashboardStats() {
-  const hrs = Math.floor(appState.reclaimedMins / 60);
-  const mins = appState.reclaimedMins % 60;
-  const heroNum = document.getElementById('reclaimed-big-number');
-  const loopsNum = document.getElementById('loops-stat-num');
+// =========================================================
+// CLOCK & STATS
+// =========================================================
+function setupClock() {
+  const phoneClock = document.getElementById('phone-clock');
+  const sleepClock = document.getElementById('sleep-clock-digits');
 
-  if (heroNum) heroNum.textContent = `${hrs}h ${mins}m`;
-  if (loopsNum) loopsNum.textContent = `${appState.loopsIntercepted}`;
+  function update() {
+    const d = new Date();
+    let h = d.getHours();
+    let m = d.getMinutes();
+    const str = `${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}`;
+    if (phoneClock) phoneClock.textContent = str;
+    if (sleepClock) sleepClock.textContent = str;
+  }
+  update();
+  setInterval(update, 10000);
 }
 
-// Toast Notification
-function showToast(message) {
-  const toast = document.getElementById('app-toast-box');
-  const text = document.getElementById('app-toast-text');
+function updateStats() {
+  const h = Math.floor(state.savedMins / 60);
+  const m = state.savedMins % 60;
+  const timeSavedEl = document.getElementById('stats-time-saved');
+  const loopsEl = document.getElementById('stat-loops-interrupted');
+
+  if (timeSavedEl) timeSavedEl.innerHTML = `${h}h ${m}m <small>Saved</small>`;
+  if (loopsEl) loopsEl.textContent = `${state.sessionsInterrupted}`;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('app-toast');
+  const text = document.getElementById('toast-text');
   if (toast && text) {
-    text.textContent = message;
+    text.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => {
       toast.classList.remove('show');
-    }, 3200);
+    }, 2800);
+  }
+}
+
+// =========================================================
+// ABOUT PROJECT MODAL
+// =========================================================
+function setupAboutModal() {
+  const openBtn = document.getElementById('btn-open-about');
+  const closeBtn = document.getElementById('btn-close-about');
+  const modal = document.getElementById('about-project-modal');
+
+  if (openBtn && modal) {
+    openBtn.addEventListener('click', () => {
+      modal.classList.add('open');
+    });
+  }
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => {
+      modal.classList.remove('open');
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
   }
 }
