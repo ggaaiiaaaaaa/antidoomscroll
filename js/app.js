@@ -104,10 +104,12 @@ const state = {
   repCount: 0,
   targetReps: 5,
   cameraStream: null,
-  autoCountTimer: null
+  autoCountTimer: null,
+  randomTasksEnabled: true
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupTheme();
   setupTopDemoNav();
   setupPhoneNav();
   setupReelFeed();
@@ -435,6 +437,14 @@ function setupPauseModal() {
       }
     });
   }
+
+  const btnShuffle = document.getElementById('btn-shuffle-task');
+  if (btnShuffle) {
+    btnShuffle.addEventListener('click', () => {
+      randomizeTask(true);
+      audio.playChime();
+    });
+  }
 }
 
 function setPauseTab(tab) {
@@ -478,13 +488,51 @@ function setPauseTab(tab) {
   }
 }
 
+// Picks a random task category (breathing, intent, workout) and random exercise/preset
+function randomizeTask(isManualReroll = false) {
+  const modes = ['breath', 'intent', 'workout'];
+  const pickedMode = modes[Math.floor(Math.random() * modes.length)];
+
+  if (pickedMode === 'workout') {
+    const exKeys = Object.keys(EXERCISES);
+    const randomEx = exKeys[Math.floor(Math.random() * exKeys.length)];
+    selectExercise(randomEx);
+  } else if (pickedMode === 'intent') {
+    const input = document.getElementById('intent-input');
+    const presets = [
+      "Reply to an urgent message",
+      "I got distracted mindlessly",
+      "I am ready to go to sleep",
+      "Check an important school update",
+      "Looking up an address"
+    ];
+    if (input) {
+      input.value = "";
+      input.placeholder = `Random Prompt: ${presets[Math.floor(Math.random() * presets.length)]}`;
+    }
+  }
+
+  setPauseTab(pickedMode);
+
+  if (isManualReroll) {
+    showToast(`Assigned new random challenge: ${pickedMode.toUpperCase()}`);
+  }
+}
+
 function openPauseModal(msg) {
   const modal = document.getElementById('pause-modal');
   const subtitle = document.getElementById('pause-subtitle');
   if (subtitle && msg) subtitle.textContent = msg;
   if (modal) {
     modal.classList.add('active');
-    setPauseTab(state.pauseMode || 'breath');
+
+    // If random tasks are enabled, randomly pick the unlock challenge
+    if (state.randomTasksEnabled) {
+      randomizeTask(false);
+    } else {
+      setPauseTab(state.pauseMode || 'breath');
+    }
+
     audio.playChime();
   }
 }
@@ -552,57 +600,90 @@ function stopBreathCycle() {
   if (circleEl) circleEl.classList.remove('inhale');
 }
 
-// =========================================================
-// PHYSICAL WORKOUT & CAMERA CHECKPOINT
-// =========================================================
+// Exercise Catalog for Random and Manual Selection
+const EXERCISES = {
+  'squats': {
+    name: '5 Squats',
+    reps: 5,
+    icon: '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="M15 8h-6l-2 5 3 2v6h2v-5l2-2 3 1v-3z"/></svg>',
+    isPhoto: false
+  },
+  'jacks': {
+    name: '10 Jumping Jacks',
+    reps: 10,
+    icon: '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M6 20v-4M4 18h4M18 4v4M16 6h4M3 8l3-3M18 21l3-3M8 3l-3 3M21 16l-3 3"/></svg>',
+    isPhoto: false
+  },
+  'pushups': {
+    name: '5 Push-ups',
+    reps: 5,
+    icon: '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="2" y1="20" x2="22" y2="20"/><path d="M6 16l4-8 4 4 4-8"/></svg>',
+    isPhoto: false
+  },
+  'desk': {
+    name: 'Tidy Desk Photo',
+    reps: 1,
+    icon: '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 3l3 3-10 10-3-3z"/><path d="M11 13l-4 4-2-2 4-4"/><path d="M3 21h4l2-2-4-4z"/></svg>',
+    isPhoto: true
+  },
+  'water': {
+    name: 'Drink a Glass of Water',
+    reps: 1,
+    icon: '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
+    isPhoto: true
+  },
+  'stretch': {
+    name: 'Full Body Stretch',
+    reps: 1,
+    icon: '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="5" y1="12" x2="19" y2="12"/><polyline points="8 21 12 17 16 21"/></svg>',
+    isPhoto: true
+  }
+};
+
+function selectExercise(exKey) {
+  const config = EXERCISES[exKey] || EXERCISES['squats'];
+  state.currentExercise = exKey;
+  state.repCount = 0;
+  state.targetReps = config.reps;
+
+  const taskTitle = document.getElementById('workout-task-title');
+  const repBadge = document.getElementById('workout-rep-count');
+  const frameIconWrap = document.getElementById('posture-icon-wrap');
+  const banner = document.getElementById('verification-banner');
+
+  if (banner) banner.classList.remove('active');
+
+  document.querySelectorAll('.exercise-btn[data-ex]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-ex') === exKey);
+  });
+
+  if (frameIconWrap) {
+    frameIconWrap.innerHTML = config.icon;
+  }
+
+  if (taskTitle) {
+    taskTitle.textContent = `Task: ${config.name}`;
+  }
+
+  if (repBadge) {
+    if (config.isPhoto) {
+      repBadge.textContent = 'Verify Photo';
+    } else {
+      repBadge.textContent = `0 / ${config.reps}`;
+    }
+  }
+}
+
 function setupWorkoutCamera() {
   const btnRep = document.getElementById('btn-count-rep');
   const btnAuto = document.getElementById('btn-auto-reps');
   const btnPhoto = document.getElementById('btn-snap-photo');
-  const repBadge = document.getElementById('workout-rep-count');
-  const taskTitle = document.getElementById('workout-task-title');
-  const frameIconWrap = document.getElementById('posture-icon-wrap');
-
-  const exerciseIcons = {
-    'squats': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="M15 8h-6l-2 5 3 2v6h2v-5l2-2 3 1v-3z"/></svg>',
-    'jacks': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M6 20v-4M4 18h4M18 4v4M16 6h4M3 8l3-3M18 21l3-3M8 3l-3 3M21 16l-3 3"/></svg>',
-    'desk': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 3l3 3-10 10-3-3z"/><path d="M11 13l-4 4-2-2 4-4"/><path d="M3 21h4l2-2-4-4z"/></svg>',
-    'water': '<svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>'
-  };
 
   document.querySelectorAll('.exercise-btn[data-ex]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.exercise-btn[data-ex]').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
       const ex = btn.getAttribute('data-ex');
-      state.currentExercise = ex;
-      state.repCount = 0;
-
-      const banner = document.getElementById('verification-banner');
-      if (banner) banner.classList.remove('active');
-
-      if (frameIconWrap && exerciseIcons[ex]) {
-        frameIconWrap.innerHTML = exerciseIcons[ex];
-      }
-
-      if (ex === 'squats') {
-        state.targetReps = 5;
-        if (taskTitle) taskTitle.textContent = "Task: 5 Squats";
-        if (repBadge) repBadge.textContent = "0 / 5";
-      } else if (ex === 'jacks') {
-        state.targetReps = 10;
-        if (taskTitle) taskTitle.textContent = "Task: 10 Jumping Jacks";
-        if (repBadge) repBadge.textContent = "0 / 10";
-      } else if (ex === 'desk') {
-        state.targetReps = 1;
-        if (taskTitle) taskTitle.textContent = "Task: Tidy Desk Photo";
-        if (repBadge) repBadge.textContent = "Take Photo";
-      } else if (ex === 'water') {
-        state.targetReps = 1;
-        if (taskTitle) taskTitle.textContent = "Task: Drink Water";
-        if (repBadge) repBadge.textContent = "Hydrate & Verify";
-      }
+      selectExercise(ex);
+      audio.playChime();
     });
   });
 
@@ -806,6 +887,15 @@ function setupSettings() {
     });
   }
 
+  const randomToggle = document.getElementById('setting-random-toggle');
+  if (randomToggle) {
+    randomToggle.addEventListener('change', (e) => {
+      state.randomTasksEnabled = e.target.checked;
+      audio.playChime();
+      showToast(state.randomTasksEnabled ? "Randomized unlock tasks active" : "Random task mode disabled");
+    });
+  }
+
   const strictRow = document.getElementById('setting-strict-row');
   if (strictRow) {
     strictRow.addEventListener('click', () => {
@@ -881,4 +971,92 @@ function setupAboutModal() {
       if (e.target === modal) modal.classList.remove('open');
     });
   }
+}
+
+// =========================================================
+// THEME SWITCHER (LIGHT, DARK, FOLLOW SYSTEM)
+// =========================================================
+function setupTheme() {
+  const root = document.documentElement;
+  const topBtn = document.getElementById('btn-top-theme');
+  const topIcon = document.getElementById('top-theme-icon');
+  const topLabel = document.getElementById('top-theme-label');
+  const segmentBtns = document.querySelectorAll('#settings-theme-group .theme-segment-btn');
+
+  // SVG Icons for Light (Sun), Dark (Moon), System (Monitor)
+  const icons = {
+    light: `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`,
+    dark: `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`,
+    system: `<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>`
+  };
+
+  // Preference from localStorage, default to 'system'
+  let currentTheme = localStorage.getItem('antidoomscroll_theme') || 'system';
+
+  function applyTheme(theme) {
+    currentTheme = theme;
+    localStorage.setItem('antidoomscroll_theme', theme);
+
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      root.setAttribute('data-theme', theme);
+    }
+
+    // Update settings segment buttons
+    segmentBtns.forEach(btn => {
+      const val = btn.getAttribute('data-theme-val');
+      btn.classList.toggle('active', val === theme);
+    });
+
+    // Update top header button
+    if (topLabel && topIcon) {
+      if (theme === 'system') {
+        const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        topLabel.textContent = `System (${sysDark ? 'Dark' : 'Light'})`;
+        topIcon.innerHTML = icons.system;
+      } else if (theme === 'light') {
+        topLabel.textContent = 'Light';
+        topIcon.innerHTML = icons.light;
+      } else {
+        topLabel.textContent = 'Dark';
+        topIcon.innerHTML = icons.dark;
+      }
+    }
+  }
+
+  // Segmented control click handlers in Settings screen
+  segmentBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-theme-val');
+      applyTheme(val);
+      audio.playChime();
+      showToast(`Appearance: ${val.charAt(0).toUpperCase() + val.slice(1)} Mode`);
+    });
+  });
+
+  // Top header button toggles sequentially: dark -> light -> system -> dark
+  if (topBtn) {
+    topBtn.addEventListener('click', () => {
+      let nextTheme;
+      if (currentTheme === 'dark') nextTheme = 'light';
+      else if (currentTheme === 'light') nextTheme = 'system';
+      else nextTheme = 'dark';
+
+      applyTheme(nextTheme);
+      audio.playChime();
+      showToast(`Switched theme to ${nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1)}`);
+    });
+  }
+
+  // React dynamically to OS dark/light mode change if user chose 'system'
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (currentTheme === 'system') {
+      applyTheme('system');
+    }
+  });
+
+  // Apply initial theme
+  applyTheme(currentTheme);
 }

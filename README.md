@@ -15,8 +15,9 @@ AntiDoomscroll is an app designed to interrupt compulsive scrolling on platforms
    - **Breathing Exercise:** A quick 5-second guided breath to help reset focus.
    - **Intent Check:** Prompts you to state what you originally opened your phone for before you continue.
 
-3. **Physical Checkpoints**
-   - Prompts you to do a quick physical action (like 5 squats or drinking a glass of water) using your camera or motion sensor to break the scroll trance.
+3. **Physical Checkpoints & Randomized Unlock Tasks**
+   - Every pause interruption assigns a random task (Breathing reset, Intention Check, 5 Squats, 10 Jumping Jacks, 5 Push-ups, Desk Clean Photo, Drink Water, or Full Body Stretch) to prevent habituation and ensure genuine friction.
+   - User cannot predict which friction checkpoint will appear.
 
 4. **Helpful Redirection**
    - One-tap shortcuts to switch to productive apps instead (e.g., Kindle, Notion, or a bedtime sleep screen).

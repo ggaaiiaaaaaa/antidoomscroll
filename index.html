@@ -33,7 +33,7 @@
       </button>
       <button class="demo-btn" data-action="trigger-pause">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Trigger Pause
+        Random Pause
       </button>
       <button class="demo-btn" data-action="breathing">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
@@ -58,6 +58,10 @@
     </nav>
 
     <div class="right-controls">
+      <button class="top-theme-btn" id="btn-top-theme" title="Switch Theme (Light / Dark / System)">
+        <svg id="top-theme-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span id="top-theme-label">Dark</span>
+      </button>
       <button class="control-btn" id="btn-audio-toggle">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
         <span id="audio-btn-text">Sound ON</span>
@@ -364,12 +368,24 @@
                ========================================================= -->
           <div class="pause-modal" id="pause-modal">
             <div class="pause-header">
-              <span class="pause-badge">Scroll Pause</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="pause-badge">Scroll Pause</span>
+                <span class="random-task-badge">
+                  <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                  Random Task Active
+                </span>
+              </div>
               <h2>Take a Moment</h2>
-              <p id="pause-subtitle">You've been scrolling for 10 minutes straight. Complete a quick pause to continue.</p>
-              <div style="background:#141D2D; border:1px solid #243048; border-radius:6px; padding:4px 8px; font-size:0.65rem; color:var(--text-muted); display:flex; align-items:center; gap:5px; margin-top:4px;">
-                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--emerald);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <span>Anti-Bypass Lock: Feeds & app deletion locked until verified</span>
+              <p id="pause-subtitle">You've been scrolling for 10 minutes straight. Complete a randomly assigned challenge to unlock.</p>
+              <div class="pause-lock-banner">
+                <div style="display:flex; align-items:center; gap:5px;">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--emerald);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <span>Strict Lock: Apps locked until challenge verified</span>
+                </div>
+                <button type="button" class="btn-reroll-task" id="btn-shuffle-task" title="Pick another random challenge">
+                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  Randomize
+                </button>
               </div>
             </div>
 
@@ -424,6 +440,10 @@
                   <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="M6.5 6.5l11 11M6 20v-4M4 18h4M18 4v4M16 6h4M3 8l3-3M18 21l3-3M8 3l-3 3M21 16l-3 3"/></svg>
                   10 Jumping Jacks
                 </button>
+                <button class="exercise-btn" data-ex="pushups">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="2" y1="20" x2="22" y2="20"/><path d="M6 16l4-8 4 4 4-8"/></svg>
+                  5 Push-ups
+                </button>
                 <button class="exercise-btn" data-ex="desk">
                   <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 3l3 3-10 10-3-3z"/><path d="M11 13l-4 4-2-2 4-4"/><path d="M3 21h4l2-2-4-4z"/></svg>
                   Tidy Desk
@@ -431,6 +451,10 @@
                 <button class="exercise-btn" data-ex="water">
                   <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
                   Drink Water
+                </button>
+                <button class="exercise-btn" data-ex="stretch">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="5" y1="12" x2="19" y2="12"/><polyline points="8 21 12 17 16 21"/></svg>
+                  Full Stretch
                 </button>
               </div>
 
@@ -512,7 +536,7 @@
               <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <div>
-              <h4 style="font-size:0.84rem; font-weight:700; color:#A7F3D0;">45 Minutes Reclaimed</h4>
+              <h4 style="font-size:0.84rem; font-weight:700; color:var(--emerald);">45 Minutes Reclaimed</h4>
               <p style="font-size:0.7rem; color:var(--text-muted);">Protected bedtime from scrolling loss.</p>
             </div>
           </div>
@@ -635,6 +659,27 @@
           </div>
 
           <div class="settings-group">
+            <div class="theme-switch-row">
+              <div>
+                <h4>App Appearance</h4>
+                <p>Choose theme or follow device OS</p>
+              </div>
+              <div class="theme-segment-group" id="settings-theme-group">
+                <button type="button" class="theme-segment-btn" data-theme-val="light" title="Light Theme">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  <span>Light</span>
+                </button>
+                <button type="button" class="theme-segment-btn" data-theme-val="dark" title="Dark Theme">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  <span>Dark</span>
+                </button>
+                <button type="button" class="theme-segment-btn" data-theme-val="system" title="Follow System Theme">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  <span>System</span>
+                </button>
+              </div>
+            </div>
+
             <div class="setting-item">
               <div>
                 <h4>Bedtime Lock Active</h4>
@@ -679,6 +724,20 @@
               </label>
             </div>
 
+            <div class="setting-item" id="setting-random-task-row">
+              <div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <h4>Randomized Unlock Tasks</h4>
+                  <span class="badge-blue">ACTIVE</span>
+                </div>
+                <p>Randomly picks workout, breathwork, or reflection per interruption</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="setting-random-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
             <div class="setting-item" id="setting-strict-row" style="cursor:pointer;" title="Click to view Strict Lock details">
               <div>
                 <div style="display:flex; align-items:center; gap:6px;">
@@ -709,7 +768,7 @@
           </div>
 
           <!-- Privacy Note -->
-          <div style="background:#131B2A; border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:12px;">
+          <div class="privacy-note-card">
             <h4 style="font-size:0.78rem; font-weight:700; color:var(--emerald);">Private & Local</h4>
             <p style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">Runs on your device. Zero camera data or browsing history is uploaded anywhere.</p>
           </div>
@@ -759,15 +818,15 @@
           <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:14px;">Title Proposal Checklist</p>
 
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; background:#151D2D; padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <label class="notion-task-item">
               <input type="checkbox" checked style="accent-color:var(--emerald);">
               <span style="text-decoration:line-through; color:var(--text-dim);">Finalize Title Proposal Slides</span>
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; background:#151D2D; padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <label class="notion-task-item">
               <input type="checkbox" checked style="accent-color:var(--emerald);">
               <span style="text-decoration:line-through; color:var(--text-dim);">Build Web Prototype</span>
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; background:#151D2D; padding:10px; border-radius:8px; border:1px solid var(--border);">
+            <label class="notion-task-item">
               <input type="checkbox" checked style="accent-color:var(--emerald);">
               <span>Present to Evaluation Panel</span>
             </label>
@@ -785,7 +844,7 @@
           <button class="btn-close-sim">Close</button>
         </div>
         <div class="sim-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%;">
-          <div style="width:54px; height:54px; border-radius:50%; background:#1A263B; color:var(--emerald); display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+          <div style="width:54px; height:54px; border-radius:50%; background:var(--emerald-bg); color:var(--emerald); display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
             <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
           </div>
           <h3 style="font-size:1.1rem; font-weight:800;">Sleep Wind-Down</h3>
@@ -808,7 +867,7 @@
           <button class="btn-close-sim">Dismiss</button>
         </div>
         <div class="sim-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%; gap:10px;">
-          <div style="width:54px; height:54px; border-radius:50%; background:#1A263B; color:var(--amber); display:flex; align-items:center; justify-content:center;">
+          <div style="width:54px; height:54px; border-radius:50%; background:var(--amber-bg); color:var(--amber); display:flex; align-items:center; justify-content:center;">
             <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </div>
           <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:900;" id="sleep-clock-digits">10:30</div>
